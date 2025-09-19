@@ -262,72 +262,52 @@ public class AddRec extends javax.swing.JFrame {
     }//GEN-LAST:event_txtIDNUMBERActionPerformed
 
     private void btnADDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnADDActionPerformed
-    String id = txtIDNUMBER.getText().trim();
+     String id = txtIDNUMBER.getText().trim();
     String fname = txtFIRSTNAME.getText().trim();
     String lname = txtLASTNAME.getText().trim();
-    String age = txtAGE.getText().trim();
+    String ageText = txtAGE.getText().trim();
     String address = txtADDRESS.getText().trim();
 
-    if (id.isEmpty() || fname.isEmpty() || lname.isEmpty() || age.isEmpty() || address.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "⚠ Please fill in all fields!");
+    if (id.isEmpty() || fname.isEmpty() || lname.isEmpty() || ageText.isEmpty() || address.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "⚠ Please fill in all fields!", "Error", JOptionPane.ERROR_MESSAGE);
         return;
     }
 
     try {
-        Integer.valueOf(age);
+        Integer.parseInt(ageText); // just check age is a number
     } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(this, "⚠ Age must be a number!");
+        JOptionPane.showMessageDialog(this, "⚠ Age must be a number!", "Error", JOptionPane.ERROR_MESSAGE);
         return;
     }
-if (id.isEmpty() || fname.isEmpty() || lname.isEmpty() || age.isEmpty() || address.isEmpty()) {
-    JOptionPane.showMessageDialog(this, "Please fill in all fields!", "Error", JOptionPane.ERROR_MESSAGE);
-    return;
-}
 
-DatabaseHelper.insertRecord(id, fname, lname, Integer.parseInt(age), address);
-DatabaseHelper.loadData(tableModel); // refresh table
-clearFields();
+    // ✅ Correct: use insert, not update
+    DatabaseHelper.insertRecord(id, fname, lname, ageText, address);
+    DatabaseHelper.loadData(tableModel);
+    clearFields();
     }//GEN-LAST:event_btnADDActionPerformed
 
     private void btnEDITActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEDITActionPerformed
- int row = RECORD_TABLE.getSelectedRow();
+     String id = txtIDNUMBER.getText().trim();
+    String fname = txtFIRSTNAME.getText().trim();
+    String lname = txtLASTNAME.getText().trim();
+    String ageText = txtAGE.getText().trim();
+    String address = txtADDRESS.getText().trim();
 
-    if (row >= 0) {
-        // Step 1: Load selected row into text fields (if empty or new selection)
-        if (txtIDNUMBER.getText().isEmpty() && txtFIRSTNAME.getText().isEmpty()
-                && txtLASTNAME.getText().isEmpty() && txtAGE.getText().isEmpty()
-                && txtADDRESS.getText().isEmpty()) {
-
-            txtIDNUMBER.setText(tableModel.getValueAt(row, 0).toString());
-            txtFIRSTNAME.setText(tableModel.getValueAt(row, 1).toString());
-            txtLASTNAME.setText(tableModel.getValueAt(row, 2).toString());
-            txtAGE.setText(tableModel.getValueAt(row, 3).toString());
-            txtADDRESS.setText(tableModel.getValueAt(row, 4).toString());
-        } else {
-            // Step 2: Confirm update
-            int confirm = JOptionPane.showConfirmDialog(
-                    this,
-                    "Are you sure you want to update this record?",
-                    "Confirm Edit",
-                    JOptionPane.YES_NO_OPTION
-            );
-
-            if (confirm == JOptionPane.YES_OPTION) {
-                // Step 3: Update table with new values from text fields
-                tableModel.setValueAt(txtIDNUMBER.getText(), row, 0);
-                tableModel.setValueAt(txtFIRSTNAME.getText(), row, 1);
-                tableModel.setValueAt(txtLASTNAME.getText(), row, 2);
-                tableModel.setValueAt(txtAGE.getText(), row, 3);
-                tableModel.setValueAt(txtADDRESS.getText(), row, 4);
-
-                JOptionPane.showMessageDialog(this, "Record updated successfully!");
-                clearFields();
-            }
-        }
-    } else {
-        JOptionPane.showMessageDialog(this, "Please select a row to edit!");
+    if (id.isEmpty() || fname.isEmpty() || lname.isEmpty() || ageText.isEmpty() || address.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "⚠ Please fill in all fields!", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
     }
-        
+
+    try {
+        Integer.parseInt(ageText);
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "⚠ Age must be a number!", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    DatabaseHelper.updateRecord(id, fname, lname, ageText, address);
+    DatabaseHelper.loadData(tableModel);
+    clearFields();
     }//GEN-LAST:event_btnEDITActionPerformed
 
     private void txtADDRESSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtADDRESSActionPerformed
@@ -403,13 +383,25 @@ clearFields();
     }//GEN-LAST:event_btnSearchActionPerformed
 
     private void btnDELETEActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDELETEActionPerformed
-int row = RECORD_TABLE.getSelectedRow();
-if (row >= 0) {
-    String id = tableModel.getValueAt(row, 0).toString();
-    DatabaseHelper.deleteRecord(id);
-    DatabaseHelper.loadData(tableModel);
-    clearFields();
-}
+     int row = RECORD_TABLE.getSelectedRow();
+    if (row >= 0) {
+        String idText = txtIDNUMBER.getText().trim();
+
+        if (idText.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "⚠ Please enter/select a valid ID.");
+            return;
+        }
+
+        // ✅ Pass ID as String directly
+        DatabaseHelper.deleteRecord(idText);
+        JOptionPane.showMessageDialog(this, "✅ Record deleted successfully!");
+        DatabaseHelper.loadData(tableModel); // refresh table
+        clearFields();
+
+    } else {
+        JOptionPane.showMessageDialog(this, "⚠ Please select a row to delete.");
+    }
+
     }//GEN-LAST:event_btnDELETEActionPerformed
 
     private void btnEXITActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEXITActionPerformed
