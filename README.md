@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS records (
 
 1. **Clone the repository**:
    ```bash
-   git clone <repository-url>
+   git clone <github.com/Miles-coder2000/SRDB_JAVA.git>
    cd AddRec
    ```
 
